@@ -94,11 +94,13 @@ struct Shared<Value> {
         let stratergy: any PersistenceStratergy<Value>
         var currentValue: Value
         
-        // This is a patch, using this allows other views to render the correct current value
+        //Patch: using this allows other views (Settings View) to render the correct current value.
         private var flag: Bool = false
         
         var value: Value {
             get {
+                // accessing the current value allows to work in the content View, but not being called by Settings view for the updated value.
+                _ = currentValue
                 if let stored = stratergy.read {
                     return stored
                 } else {
@@ -108,7 +110,7 @@ struct Shared<Value> {
             set {
                 currentValue = newValue
                 stratergy.write(newValue)
-                // Without this, its working in the first view but does, other view does not re-render correct current value.
+                // Without this, its working in the first view but does, other view (Settings View) does not re-render correct current value.
                 flag.toggle()
             }
         }
